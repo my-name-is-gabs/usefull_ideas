@@ -41,7 +41,7 @@ describe('SampleComponent.vue', () => {
 ```
 
 ### Testing with localStorage
-```
+```javascript
 import { shallowMount } from '@vue/test-utils';
 import SampleComponent from '@/components/SampleComponent.vue';
 
