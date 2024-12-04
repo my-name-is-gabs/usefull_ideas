@@ -131,3 +131,7 @@ jest.spyOn(console, 'error').mockImplementation((message) => {
   console.error(message); // Allow other errors
 });
 ```
+
+### Setting up the coverage in pytest
+![image](https://github.com/user-attachments/assets/569a27f5-0bbb-4632-9654-175e336a7575)
+
