@@ -6,6 +6,9 @@
 - [helpful tip to ignore console warning or error](#3)
 - [Setting up the coverage in pytest](#4)
 - [Image upload by application/json using flask and vuejs](#5)
+- [Populating data in flask](#6)
+
+<hr>
 
 ### Testing with localStorage in vue <div id="1"></div>
 ```javascript
@@ -44,6 +47,8 @@ describe('SampleComponent', () => {
 });
 
 ```
+
+<hr>
 
 ### Testing samples for my data initialization in todolist <div id="2"></div>
 ```javascript
@@ -121,6 +126,7 @@ describe('SampleComponent.vue', () => {
   })
 })
 ```
+<hr>
 
 ### helpful tip to ignore console warning or error <div id="3"></div>
 1. Removing b-color-mode warning
@@ -138,11 +144,14 @@ jest.spyOn(console, 'error').mockImplementation((message) => {
   console.error(message); // Allow other errors
 });
 ```
+<hr>
 
 ### Setting up the coverage in pytest <div id="4"></div>
 ![image](https://github.com/user-attachments/assets/569a27f5-0bbb-4632-9654-175e336a7575)
 
-### Image upload by application/json using flask and vuejs
+<hr>
+
+### Image upload by application/json using flask and vuejs <div id="5"></div>
 #### Backend
 ```python
 from flask import Flask, request, jsonify
@@ -400,6 +409,35 @@ describe('UploadImage.vue', () => {
     expect(wrapper.vm.message).toBe('Error: Upload failed');
   });
 });
+```
+
+<hr>
+
+### Populating data with flask <div id="6"></div>
+```js
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///example.db'
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+
+@app.cli.command('populate-db')
+def populate_db():
+    """Populate the database with sample data."""
+    users = [
+        User(name='Alice', email='alice@example.com'),
+        User(name='Bob', email='bob@example.com'),
+        User(name='Charlie', email='charlie@example.com'),
+    ]
+    db.session.bulk_save_objects(users)
+    db.session.commit()
+    print("Database populated successfully!")
 ```
 
 
