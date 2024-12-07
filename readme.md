@@ -1,6 +1,10 @@
-# Get some help
+# My How to
 
-### Testing with localStorage in vue
+## Table of contents
+- [Testing with localStorage in vue](#1)
+- [Testing samples for my data initialization in todolist](#2)
+
+### Testing with localStorage in vue <div id="1"></div>
 ```javascript
 import { shallowMount } from '@vue/test-utils';
 import SampleComponent from '@/components/SampleComponent.vue';
@@ -38,7 +42,7 @@ describe('SampleComponent', () => {
 
 ```
 
-### Testing samples for my data initialization in todolist
+### Testing samples for my data initialization in todolist <div id="2"></div>
 ```javascript
 import { shallowMount } from '@vue/test-utils'
 import SampleComponent from '@/components/SampleComponent.vue'
