@@ -467,6 +467,49 @@ def get_image(filename):
 if __name__ == '__main__':
     app.run(debug=True)
 ```
+#### Backend (testing)
+```python
+import os
+import pytest
+from flask import Flask
+from app import app  # Import the Flask app from your main script
+
+# Create a pytest fixture for the Flask app
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+    client = app.test_client()
+    yield client
+
+# Test case for retrieving an existing image
+def test_get_image_success(client):
+    # Arrange: Ensure the test image exists
+    test_image_dir = 'static/images'
+    test_image_name = 'test_image.jpg'
+    test_image_path = os.path.join(test_image_dir, test_image_name)
+    os.makedirs(test_image_dir, exist_ok=True)
+    with open(test_image_path, 'wb') as f:
+        f.write(b'Test Image Content')
+
+    # Act: Make a GET request to the endpoint
+    response = client.get(f'/api/image/{test_image_name}')
+
+    # Assert: Verify the response
+    assert response.status_code == 200
+    assert response.data == b'Test Image Content'
+
+    # Cleanup: Remove the test image
+    os.remove(test_image_path)
+
+# Test case for handling a non-existent image
+def test_get_image_not_found(client):
+    # Act: Make a GET request to a non-existent image
+    response = client.get('/api/image/non_existent.jpg')
+
+    # Assert: Verify the response
+    assert response.status_code == 404
+```
+
 #### Frontend
 ```vue
 <template>
@@ -503,6 +546,62 @@ export default {
   },
 };
 </script>
+```
+
+#### Frontend (testing)
+```vue
+import { mount } from '@vue/test-utils';
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
+import MyComponent from '@/components/MyComponent.vue'; // Adjust path to your component
+
+describe('MyComponent.vue', () => {
+  let mock;
+
+  beforeEach(() => {
+    // Create a mock instance of axios
+    mock = new MockAdapter(axios);
+  });
+
+  afterEach(() => {
+    // Reset the mock adapter
+    mock.reset();
+  });
+
+  it('fetches the image successfully and updates imageUrl', async () => {
+    // Arrange: Mock the API response
+    const mockImageBlob = new Blob(['Test Image Content'], { type: 'image/jpeg' });
+    mock.onGet('http://127.0.0.1:5000/images/example.jpg').reply(200, mockImageBlob);
+
+    // Act: Mount the component
+    const wrapper = mount(MyComponent);
+    await wrapper.vm.$nextTick(); // Wait for the mounted lifecycle hook to complete
+
+    // Assert: Verify the image URL is updated
+    expect(wrapper.vm.imageUrl).toBeTruthy(); // Ensure imageUrl is set
+    expect(wrapper.html()).toContain('<img'); // Check if <img> tag is rendered
+  });
+
+  it('handles an error when the API call fails', async () => {
+    // Arrange: Mock a failed API response
+    mock.onGet('http://127.0.0.1:5000/images/example.jpg').reply(404);
+
+    // Spy on console.error to verify error handling
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Act: Mount the component
+    const wrapper = mount(MyComponent);
+    await wrapper.vm.$nextTick(); // Wait for the mounted lifecycle hook to complete
+
+    // Assert: Verify imageUrl remains null and error is logged
+    expect(wrapper.vm.imageUrl).toBeNull(); // imageUrl should not be set
+    expect(consoleErrorSpy).toHaveBeenCalled(); // Ensure error was logged
+
+    // Cleanup the console spy
+    consoleErrorSpy.mockRestore();
+  });
+});
+
 ```
 
 
