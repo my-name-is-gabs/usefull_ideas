@@ -7,6 +7,7 @@
 - [Setting up the coverage in pytest](#4)
 - [Image upload by application/json using flask and vuejs](#5)
 - [Populating data in flask](#6)
+- [Serving static file in API using Flask](#7)
 
 <hr>
 
@@ -439,6 +440,73 @@ def populate_db():
     db.session.commit()
     print("Database populated successfully!")
 ```
+
+<hr>
+
+### Serving static file in API using Flask
+1. Save your static image in a directory like static/images in your Flask project structure
+```
+project/
+│
+├── app.py
+├── static/
+│   └── images/
+│       └── example.jpg
+```
+2. Serve static files
+**Backend**
+```python
+from flask import Flask, send_from_directory
+
+app = Flask(__name__)
+
+@app.route('/api/image/<filename>')
+def get_image(filename):
+    return send_from_directory('static/images', filename)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+**Frontend**
+```js
+<template>
+  <div>
+    <h1>Flask Image</h1>
+    <img :src="imageUrl" alt="Example" v-if="imageUrl" />
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      imageUrl: null,
+    };
+  },
+  mounted() {
+    this.fetchImage();
+  },
+  methods: {
+    async fetchImage() {
+      try {
+        // Fetch the URL from your backend
+        const response = await axios.get('http://127.0.0.1:5000/images/example.jpg', {
+          responseType: 'blob',
+        });
+        this.imageUrl = URL.createObjectURL(response.data);
+      } catch (error) {
+        console.error('Error fetching the image:', error);
+      }
+    },
+  },
+};
+</script>
+```
+
+
+
 
 
 
