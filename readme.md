@@ -443,7 +443,7 @@ def populate_db():
 
 <hr>
 
-### Serving static file in API using Flask
+### Serving static files in API using Flask <div id="7"></div>
 1. Save your static image in a directory like static/images in your Flask project structure
 ```
 project/
