@@ -288,7 +288,7 @@ if __name__ == "__main__":
 ```
 
 #### Frontend 
-```javascript
+```vue
 <template>
   <div class="container mt-5">
     <b-card title="Upload Image">
@@ -415,7 +415,7 @@ describe('UploadImage.vue', () => {
 <hr>
 
 ### Populating data with flask <div id="6"></div>
-```js
+```python
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -454,7 +454,7 @@ project/
 │       └── example.jpg
 ```
 2. Serve static files
-**Backend**
+#### Backend
 ```python
 from flask import Flask, send_from_directory
 
@@ -467,8 +467,8 @@ def get_image(filename):
 if __name__ == '__main__':
     app.run(debug=True)
 ```
-**Frontend**
-```js
+#### Frontend
+```vue
 <template>
   <div>
     <h1>Flask Image</h1>
