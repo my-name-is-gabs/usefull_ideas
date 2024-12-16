@@ -8,6 +8,7 @@
 - [Image upload by application/json using flask and vuejs](#5)
 - [Populating data in flask](#6)
 - [Serving static file in API using Flask](#7)
+- [Testing setInterval](#8)
 
 <hr>
 
@@ -604,7 +605,47 @@ describe('MyComponent.vue', () => {
 
 ```
 
+### Testing setInterval <div id="8"></div>
+```vue
+import { mount } from '@vue/test-utils';
+import CounterComponent from '@/components/CounterComponent.vue';
 
+describe('CounterComponent.vue', () => {
+  beforeEach(() => {
+    jest.useFakeTimers(); // Enable fake timers
+  });
+
+  afterEach(() => {
+    jest.useRealTimers(); // Restore real timers
+  });
+
+  it('increments the counter every second', () => {
+    const wrapper = mount(CounterComponent);
+
+    // Counter starts at 0
+    expect(wrapper.vm.counter).toBe(0);
+
+    // Fast-forward time by 1 second
+    jest.advanceTimersByTime(1000);
+    expect(wrapper.vm.counter).toBe(1);
+
+    // Fast-forward time by another 2 seconds
+    jest.advanceTimersByTime(2000);
+    expect(wrapper.vm.counter).toBe(3);
+  });
+
+  it('clears the interval on component destroy', () => {
+    const wrapper = mount(CounterComponent);
+
+    // Spy on clearInterval
+    const clearIntervalSpy = jest.spyOn(window, 'clearInterval');
+
+    wrapper.destroy(); // Trigger the `beforeDestroy` lifecycle hook
+
+    expect(clearIntervalSpy).toHaveBeenCalledTimes(1);
+  });
+});
+```
 
 
 
