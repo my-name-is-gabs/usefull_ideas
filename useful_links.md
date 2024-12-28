@@ -11,3 +11,4 @@
 - [How to install docker-compose in Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)
 - [How To Structure a Large Flask Application with Flask Blueprints and Flask-SQLAlchemy](https://www.digitalocean.com/community/tutorials/how-to-structure-a-large-flask-application-with-flask-blueprints-and-flask-sqlalchemy#step-1-installing-flask-and-flask-sqlalchemy)
 - [Import aliases setup in vite](https://vueschool.io/articles/vuejs-tutorials/import-aliases-in-vite/)
+-[10 Git commands you should start using](https://appwrite.io/blog/post/10-git-commands-you-should-start-using?ref=dailydev) 
