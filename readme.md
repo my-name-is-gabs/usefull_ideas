@@ -9,6 +9,7 @@
 - [Populating data in flask](#6)
 - [Serving static file in API using Flask](#7)
 - [Testing setInterval](#8)
+- [Using socketio for real-time update (Flask + vuejs)](#9)
 
 <hr>
 
@@ -646,6 +647,114 @@ describe('CounterComponent.vue', () => {
   });
 });
 ```
+
+### Using socketio for real-time update (Flask + vuejs <div id="9"></div>
+Frontend sample:
+```bash
+npm install socket.io-client
+```
+```vue
+<template>
+  <div>
+    <h1>Real-Time Data</h1>
+    <ul>
+      <li v-for="item in dataList" :key="item.id">{{ item.content }}</li>
+    </ul>
+  </div>
+</template>
+
+<script>
+import { io } from "socket.io-client";
+
+export default {
+  data() {
+    return {
+      dataList: [], // Holds the list of data
+    };
+  },
+  mounted() {
+    this.fetchData();
+    this.setupWebSocket();
+  },
+  methods: {
+    // Fetch initial data
+    async fetchData() {
+      const response = await fetch("http://localhost:5000/get-data");
+      this.dataList = await response.json();
+    },
+    // Setup WebSocket connection
+    setupWebSocket() {
+      const socket = io("http://localhost:5000");
+      socket.on("new_data", (newData) => {
+        this.dataList.push(newData);
+      });
+    },
+  },
+};
+</script>
+```
+Backend sample
+Installation:
+```bash
+pipenv install flask-socketio
+```
+```python
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO
+
+db = SQLAlchemy()
+socketio = SocketIO(cors_allowed_origins="*")
+
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@localhost/yourdatabase'
+
+    db.init_app(app)
+    socketio.init_app(app)
+
+    from .routes import main_blueprint
+    from .events import socketio_blueprint
+
+    app.register_blueprint(main_blueprint)
+    app.register_blueprint(socketio_blueprint)
+
+    return app
+```
+```python
+from flask import Blueprint, request, jsonify
+from .models import db, Data
+from . import socketio
+
+main_blueprint = Blueprint('main', __name__)
+
+@main_blueprint.route('/add-data', methods=['POST'])
+def add_data():
+    content = request.json.get('content')
+    new_data = Data(content=content)
+    db.session.add(new_data)
+    db.session.commit()
+
+    # Emit the new data event to WebSocket clients
+    socketio.emit('new_data', {'id': new_data.id, 'content': new_data.content})
+    return jsonify({'message': 'Data added successfully!'})
+
+@main_blueprint.route('/get-data', methods=['GET'])
+def get_data():
+    data = Data.query.all()
+    return jsonify([{'id': d.id, 'content': d.content} for d in data])
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
