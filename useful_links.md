@@ -15,3 +15,4 @@
 - [Introduction to Clean Code and Software Design Principles](https://workat.tech/machine-coding/tutorial/introduction-clean-code-software-design-principles-nwu4qqc63e09)
 - [flask_socketio dolcumentation](https://flask-socketio.readthedocs.io/en/latest/getting_started.html#initialization)
 - [socketio client-side documentation](https://socket.io/docs/v4/client-installation/)
+- [For learning patterns](https://www.patterns.dev/#patterns)
