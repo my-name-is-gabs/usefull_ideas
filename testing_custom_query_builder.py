@@ -2,10 +2,13 @@
 The concept is that before inserting the data in filter_constraint function they must be cleaned up. Meaning they need to be converted before passing it to the dynamic filtering function.
 
 The bt system has multiple models that is needed to be used for filtering. The challenge is how to unify them
+Take note, you cannot combine in a single query builder a db column from a different Model.
 
 remember this reference for ideal filter destructure
 conditions = [User.age > 18, User.name == "Alice"]
 query = session.query(User).filter(*conditions)
+
+
 '''
 
 class Model1:
@@ -24,13 +27,14 @@ recipe_1 = {
         "fields": [
             "dateFrom",
             "vvip"
-        ]
+        ],
     },
     "Model2": {
         "model": Model2,
         "fields": [
             "bt_status"
-        ]
+        ],
+       
     }
 }
 
@@ -56,17 +60,16 @@ recipe_2 = {
 
 
 def query_builder(comparison_json, model):
-    model.samp()
     print("================================")
     return f"the model {model}, the comparison {comparison_json}"
     
-def json_combiner(comparisons):
-    return {
-        "comparison": {
-            "type": "AND",
-            "comparisons": comparisons
-        }
-    }
+# def json_combiner_and_builder(type_, comparisons):
+#     combinator_json = {
+#         "comparison": {
+#             "type": "AND",
+#             "comparisons": comparisons
+#         }
+#     }
 
 def filter_constraint(models, **kwargs):
     obj_data = kwargs
@@ -79,13 +82,16 @@ def filter_constraint(models, **kwargs):
 
     # print("the recipe modefied", recipe_2)
     
-    comparison_compiler = []
+    multiple_query = []
     
-    for model_part2 in models:
-        for value_part2 in recipe_1[model_part2]["fields"]:
-            comparison_compiler=
+    for model_name in models:
+        for field_name in recipe_1[model_name]["fields"]:
+            multiple_query.append(
+                query_builder(comparison_json=recipe_2[field_name], model=model_name)
+            )
+                
     
-    print("The final output ", query_compiler)
+    print("Apply this combine filter by destructuring it for example .join().filter(*multiple_query) ", *multiple_query)
     
 filter_constraint(models=["Model1", "Model2"], dateFrom='2025-01-01', vvip=1, bt_status="Planning")
 
